@@ -24,7 +24,7 @@ function home:init()
   
   camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
   
-  monster = HC.circle(desktopDimensions.x/2, desktopDimensions.y/2, 30)
+  monster = Creature(desktopDimensions.x/2, desktopDimensions.y/2, 80)
   center = {desktopDimensions.x/2, desktopDimensions.y/2}
 end
 
@@ -34,17 +34,15 @@ end
 
 function home:update(dt)
   self:handleMouse()
-  
   if buttons.dragWindow.isSelected and love.mouse.isDown(1) then
     local gx, gy = globalMouse:getGlobalMousePosition() -- global mouse position
-    local lx, ly = mousePoint:center()
     --local lx, ly = globalMouse:toScreenPosition(gx,gy) -- local mouse position
-    screenPosition.x, screenPosition.y = gx-SW, gy-SH
-    camera:lookAt(screenPosition.x+SW/2, screenPosition.y+SH/2)
-    love.window.setPosition(screenPosition.x, screenPosition.y, activeScreen)
+    if type(gx) == "number" and type(gy) == "number" then
+      screenPosition.x, screenPosition.y = gx - mouseLock.x, gy - mouseLock.y
+      camera:lookAt(screenPosition.x+SW/2, screenPosition.y+SH/2)
+      love.window.setPosition(screenPosition.x, screenPosition.y, activeScreen)
+    end
   end
-  
-  
 end
 
 function home:keypressed(key)
@@ -64,7 +62,7 @@ end
 
 function home:mousepressed(mousex, mousey, mouseButton)
   mousePoint:moveTo(mousex, mousey)
-  mouseLock = {x = screenPosition.x + mousex, y = screenPosition.y + mousey}
+  mouseLock = {x = mousex, y = mousey}
   
   if mouseButton == 1 then
     for pos, field in pairs(fields) do

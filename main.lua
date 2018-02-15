@@ -1,4 +1,4 @@
-debug = false
+debug = true
 
 HC = require "hc"
 Shape = require "hc.shapes"
@@ -21,6 +21,8 @@ require "Tserial"
 require "class/Button"
 require "class/FillableField"
 require "class/Label"
+
+require "class/Creature"
 
 require "state/main_menu"
 require "state/main_menu_options"
@@ -46,7 +48,7 @@ function love.load(arg)
   mousePoint = HC.point(0,0)
   love.graphics.setFont(FNT.DEFAULT)
   love.graphics.setBackgroundColor(CLR.BLACK)
-  --loadImages()
+  loadImages()
   fpsCounter = Label("FPS", .015, .03, "left", CLR.BLACK)
   Gamestate.switch(main_menu)
 end
@@ -64,7 +66,7 @@ function love.keypressed(key)
 end
 
 function loadImages()
-  sprites.tile_dark = love.graphics.newImage("images/spr_tile_dark.png")
+  sprites.monster = love.graphics.newImage("images/monster.png")
 end
 
 function loadServerData()

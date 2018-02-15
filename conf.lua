@@ -5,7 +5,7 @@ function love.conf(t)
 	t.window.height = 400
   t.window.borderless = true
   
-  t.window.vsync = false
+  t.window.vsync = true
 
 	t.console = false
 end
