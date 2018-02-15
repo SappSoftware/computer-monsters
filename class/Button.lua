@@ -1,16 +1,18 @@
 Button = Class{
-  init = function(self, x, y, w, h, text)
+  init = function(self, x, y, w, h, text, color)
     self.w = math.floor(SW*w)
     self.h = math.floor(SH*h)
     self.x = math.floor(SW*(x - w/2))+.5
     self.y = math.floor(SH*(y - h/2))+.5
     self.body = HC.rectangle(self.x, self.y, self.w, self.h)
+    self.color = color or CLR.WHITE
     self.text = text
     self.xOffset = math.floor(3*love.graphics.getLineWidth())+.5
     self.yOffset = math.floor(self.h/2 - math.floor(love.graphics.getFont():getWidth(self.text)/(self.w-2*self.xOffset))*love.graphics.getFont():getHeight()/2)+.5
     self.isActive = true
     self.isHighlighted = false
     self.isSelectable = true
+    self.isSelected = false
   end;
   
   update = function(self, dt)
@@ -20,9 +22,9 @@ Button = Class{
   draw = function(self)
     if self.isActive then
       if self.isSelectable then
-        love.graphics.setColor(CLR.WHITE)
+        love.graphics.setColor(self.color)
         self.body:draw("line")
-        love.graphics.setColor(CLR.WHITE)
+        love.graphics.setColor(self.color)
         love.graphics.printf(self.text, self.x+self.xOffset, self.y+self.yOffset, self.w-2*self.xOffset, "center", 0, 1, 1, 0, love.graphics.getFont():getHeight()/2)
       else
         love.graphics.setColor(CLR.GREY)
@@ -49,8 +51,16 @@ Button = Class{
   end;
   
   mousepressed = function(self, mouseButton)
-    if self.isHighlighted then
+    if self.isHighlighted and mouseButton == 1 then
+      self.isSelected = true
+    end
+  end;
+  
+  mousereleased = function(self, mouseButton)
+    if self.isHighlighted and self.isSelected then
       self:action()
+    else
+      self.isSelected = false
     end
   end;
   

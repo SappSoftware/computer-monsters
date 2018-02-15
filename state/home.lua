@@ -1,106 +1,107 @@
 home = {}
 
 local buttons = {}
-local fields = {}
 local labels = {}
-
-local ui_square = {}
+local fields = {}
 
 local camera = {}
-local zoom = 1
 
-local worldMouse = {}
+local monster = {}
+local desktopDimensions = {}
+local screenPosition = {}
+local activeScreen = nil
 
-function game:init()
-  camera = Camera(0, 0)
+local center = {}
+
+local mouseLock = {}
+
+function home:init()
+  self:initializeButtons()
+  self:initializeLabels()
+  self:initializeFields()
+  screenPosition.x, screenPosition.y, activeScreen = love.window.getPosition()
+  desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
   
-  worldMouse = HC.point(camera:worldCoords(mousePos:center()))
+  camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
   
-  ui_square = HC.rectangle(0, SW, SW, SH-SW)
-  labels.coord = Label("(" .. client.player.pos.x .. ", " .. client.player.pos.y .. ")", .1, .1, "left", CLR.BLACK)
+  monster = HC.circle(desktopDimensions.x/2, desktopDimensions.y/2, 30)
+  center = {desktopDimensions.x/2, desktopDimensions.y/2}
 end
 
-function game:enter(from)
+function home:enter(from)
   love.graphics.setBackgroundColor(CLR.WHITE)
-
-  camera:lookAt(0, 0)
-  
-  worldMouse:moveTo(camera:worldCoords(mousePos:center()))
 end
 
-function game:update(dt)
+function home:update(dt)
   self:handleMouse()
-  worldMouse:moveTo(camera:worldCoords(mousePos:center()))
   
-  client:update_game(dt, worldMouse)
+  if buttons.dragWindow.isSelected and love.mouse.isDown(1) then
+    local gx, gy = globalMouse:getGlobalMousePosition() -- global mouse position
+    local lx, ly = mousePoint:center()
+    --local lx, ly = globalMouse:toScreenPosition(gx,gy) -- local mouse position
+    screenPosition.x, screenPosition.y = gx-SW, gy-SH
+    camera:lookAt(screenPosition.x+SW/2, screenPosition.y+SH/2)
+    love.window.setPosition(screenPosition.x, screenPosition.y, activeScreen)
+  end
   
-  camera:lookAt(client.player.pos:unpack())
   
-  labels.coord:settext("(" .. client.player.pos.x .. ", " .. client.player.pos.y .. ")")
 end
 
-function game:keypressed(key)
+function home:keypressed(key)
   for pos, field in pairs(fields) do
     field:keypressed(key)
   end
-  
-  if key == "-" then
-    zoom = zoom - .1
-    camera:zoomTo(zoom)
-  end
-  
-  if key == "=" then
-    zoom = zoom + .1
-    camera:zoomTo(zoom)
-  end
-  
   if key == "escape" then
-    --Gamestate.switch(main_menu)
+    love.event.quit()
   end
 end
 
-function game:textinput(text)
+function home:textinput(text)
   for pos, field in pairs(fields) do
     field:textinput(text)
   end
 end
 
-function game:mousepressed(mousex, mousey, mouseButton)
+function home:mousepressed(mousex, mousey, mouseButton)
+  mousePoint:moveTo(mousex, mousey)
+  mouseLock = {x = screenPosition.x + mousex, y = screenPosition.y + mousey}
+  
   if mouseButton == 1 then
-    if ui_square:contains(mousex, mousey) then
-      for pos, field in pairs(fields) do
-        field:highlight(mousePos)
-        field:mousepressed(mouseButton)
-      end
-      
-      for pos, button in pairs(buttons) do
-        button:highlight(mousePos)
-        button:mousepressed(mouseButton)
-      end
+    for pos, field in pairs(fields) do
+      field:highlight(mousePoint)
+      field:mousepressed(mouseButton)
+    end
+    
+    for pos, button in pairs(buttons) do
+      button:highlight(mousePoint)
+      button:mousepressed(mouseButton)
     end
   end
 end
 
-
-function game:draw()
-  camera:draw(self.draw_game)
+function home:mousereleased(mousex, mousey, mouseButton)
+  mousePoint:moveTo(mousex, mousey)
   
-  self:drawUI()
-  
-  self:drawDebug()
+  if mouseButton == 1 then
+    for pos, field in pairs(fields) do
+      field:highlight(mousePoint)
+      field:mousereleased(mouseButton)
+    end
+    
+    for pos, button in pairs(buttons) do
+      button:highlight(mousePoint)
+      button:mousereleased(mouseButton)
+    end
+  end
 end
 
-function game:draw_game()
-  client:draw_game()
+function home:mousemoved(mousex, mousey, dx, dy)
+  
 end
 
-function game:drawUI()
-  love.graphics.setColor(CLR.BLACK)
-  ui_square:draw("fill")
-  love.graphics.setColor(CLR.WHITE)
-  ui_square:draw("line")
-  
-  for pos, button in pairs(buttons) do
+function home:draw()
+  drawFPS(fpsCounter)
+  for key, button in pairs(buttons) do
     button:draw()
   end
   for pos, field in pairs(fields) do
@@ -109,26 +110,40 @@ function game:drawUI()
   for pos, label in pairs(labels) do
     label:draw()
   end
+  
+  camera:draw(self.draw_scene)
 end
 
-function game:drawDebug()
-  love.graphics.setColor(CLR.BLACK)
-  love.graphics.print(love.timer.getFPS(), 10, 10)
+function home:draw_scene()
+  monster:draw()
+  love.graphics.points(center[1],center[2])
 end
 
-function game:handleMouse()
-  mousePos:moveTo(love.mouse.getX(), love.mouse.getY())
+function home:initializeButtons()
+  buttons.dragWindow = Button(.974, .025, .05, .05, "", CLR.BLACK)
+end
+
+function home:initializeLabels()
+  labels.title = Label("Home", .5, .1, "center", CLR.BLACK)
+end
+
+function home:initializeFields()
+  
+end
+
+function home:handleMouse()
+  mousePoint:moveTo(love.mouse.getX(), love.mouse.getY())
   local highlightButton = false
   local highlightField = false
   
   for key, button in pairs(buttons) do
-    if button:highlight(mousePos) then
+    if button:highlight(mousePoint) then
       highlightButton = true
     end
   end
   
   for key, field in pairs(fields) do
-    if field:highlight(mousePos) then
+    if field:highlight(mousePoint) then
       highlightField = true
     end
   end
@@ -142,8 +157,6 @@ function game:handleMouse()
   end
 end
 
-function game:quit()
-  if client ~= nil then
-    client.sender:disconnectNow(1)
-  end
+function home:quit()
+  
 end

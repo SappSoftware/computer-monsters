@@ -1,56 +1,71 @@
 main_menu = {}
 
 local buttons = {}
+local labels = {}
+local fields = {}
 
 function main_menu:init()
-  mousePointer = HC.point(love.mouse.getX(), love.mouse.getY())
   self:initializeButtons()
+  self:initializeLabels()
+  self:initializeFields()
 end
 
 function main_menu:enter(from)
-  
+  love.graphics.setBackgroundColor(CLR.WHITE)
 end
 
 function main_menu:update(dt)
-  mousePointer:moveTo(love.mouse.getX(), love.mouse.getY())
-  local highlightButton = false
-  local highlightField = false
-  
-  for key, button in pairs(buttons) do
-    if button:highlight(mousePointer) then
-      highlightButton = true
-    end
-  end
-  
-  if highlightButton then
-    love.mouse.setCursor(cur_highlight)
-  elseif highlightField then
-    love.mouse.setCursor(cur_field)
-  else
-    love.mouse.setCursor()
-  end
+  self:handleMouse()
 end
 
 function main_menu:keypressed(key)
   
 end
 
-function main_menu:mousepressed(x, y, mouseButton)
+function main_menu:mousepressed(mousex, mousey, mouseButton)
+  mousePoint:moveTo(mousex, mousey)
+  
   if mouseButton == 1 then
-    for key, button in pairs(buttons) do
-      if button:highlight(mousePointer) then
-        button:action()
-      end
+    for i, field in pairs(fields) do
+      field:highlight(mousePoint)
+      field:mousepressed(mouseButton)
+    end
+    
+    for i, button in pairs(buttons) do
+      button:highlight(mousePoint)
+      button:mousepressed(mouseButton)
     end
   end
 end
 
+function main_menu:mousereleased(mousex, mousey, mouseButton)
+  mousePoint:moveTo(mousex, mousey)
+  
+  if mouseButton == 1 then
+    for pos, field in pairs(fields) do
+      field:highlight(mousePoint)
+      field:mousereleased(mouseButton)
+    end
+    
+    for pos, button in pairs(buttons) do
+      button:highlight(mousePoint)
+      button:mousereleased(mouseButton)
+    end
+  end
+end
+
+
 function main_menu:draw()
+  drawFPS(fpsCounter)
   for key, button in pairs(buttons) do
     button:draw()
   end
-  
-  love.graphics.print("Main Menu", SW*.5, SH*.1)
+  for pos, field in pairs(fields) do
+    field:draw()
+  end
+  for pos, label in pairs(labels) do
+    label:draw()
+  end
 end
 
 function main_menu:resize(w,h)
@@ -65,15 +80,15 @@ function main_menu:resize(w,h)
 end
 
 function main_menu:initializeButtons()
-  buttons.play = Button(.2, .2, .15, .06, "Game Test")
-  buttons.newGame = Button(.5, .5, .15, .06, "New Game")
-  buttons.loadGame = Button(.5, .6, .15, .06, "Load Game")
-  buttons.options = Button(.5, .7, .15, .06, "Options")
-  buttons.quitGame = Button(.5, .8, .15, .06, "Quit Game")
+  buttons.play = Button(.2, .2, .3, .1, "Game Test", CLR.BLACK)
+  buttons.newGame = Button(.5, .35, .3, .1, "New Game", CLR.BLACK)
+  buttons.loadGame = Button(.5, .5, .3, .1, "Load Game", CLR.BLACK)
+  buttons.options = Button(.5, .65, .3, .1, "Options", CLR.BLACK)
+  buttons.quitGame = Button(.5, .8, .3, .1, "Quit Game", CLR.BLACK)
   
   buttons.play.action = function()
     love.mouse.setCursor()
-    Gamestate.switch(game)
+    Gamestate.switch(home)
   end
   
   buttons.newGame.action = function()
@@ -96,4 +111,40 @@ function main_menu:initializeButtons()
   end
 end
 
+function main_menu:initializeLabels()
+  labels.title = Label("Main Menu", .5, .1, "center", CLR.BLACK)
+end
 
+function main_menu:initializeFields()
+  --fields.genericField = FillableField(.5, .4, .15, .03, "Field Text", false, true, 16)
+end
+
+function main_menu:handleMouse()
+  mousePoint:moveTo(love.mouse.getX(), love.mouse.getY())
+  local highlightButton = false
+  local highlightField = false
+  
+  for key, button in pairs(buttons) do
+    if button:highlight(mousePoint) then
+      highlightButton = true
+    end
+  end
+  
+  for key, field in pairs(fields) do
+    if field:highlight(mousePoint) then
+      highlightField = true
+    end
+  end
+  
+  if highlightButton then
+    love.mouse.setCursor(CUR.H)
+  elseif highlightField then
+    love.mouse.setCursor(CUR.I)
+  else
+    love.mouse.setCursor()
+  end
+end
+
+function main_menu:quit()
+  
+end
