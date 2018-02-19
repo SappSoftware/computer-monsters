@@ -33,15 +33,38 @@ function home:enter(from)
 end
 
 function home:update(dt)
-  self:handleMouse()
+  
+  TICK = TICK + dt
+  
+  monster:update(dt)
+  --[[
   if buttons.dragWindow.isSelected and love.mouse.isDown(1) then
-    local gx, gy = globalMouse:getGlobalMousePosition() -- global mouse position
-    --local lx, ly = globalMouse:toScreenPosition(gx,gy) -- local mouse position
-    if type(gx) == "number" and type(gy) == "number" then
-      screenPosition.x, screenPosition.y = gx - mouseLock.x, gy - mouseLock.y
-      camera:lookAt(screenPosition.x+SW/2, screenPosition.y+SH/2)
-      love.window.setPosition(screenPosition.x, screenPosition.y, activeScreen)
+      local x, y = mousePoint:center()
+      local dx, dy = x - mouseLock.x, y - mouseLock.y
+      local newScreenX, newScreenY = screenPosition.x + dx, screenPosition.y + dy
+      if self:confinedToDesktop(newScreenX, newScreenY) == true then
+        camera:lookAt(newScreenX+SW/2, newScreenY+SH/2)
+        love.window.setPosition(newScreenX, newScreenY, activeScreen)
+        screenPosition.x, screenPosition.y = newScreenX, newScreenY
+      end
     end
+  ]]--
+  if TICK >= FPS then
+    self:handleMouse()
+    if buttons.dragWindow.isSelected and love.mouse.isDown(1) then
+      local gx, gy = globalMouse:getGlobalMousePosition() -- global mouse position
+      --local lx, ly = globalMouse:toScreenPosition(gx,gy) -- local mouse position
+      if type(gx) == "number" and type(gy) == "number" then
+        local newScreenX, newScreenY = gx - mouseLock.x, gy - mouseLock.y
+        if self:confinedToDesktop(newScreenX, newScreenY) == true then
+          camera:lookAt(newScreenX+SW/2, newScreenY+SH/2)
+          love.window.setPosition(newScreenX, newScreenY, activeScreen)
+          screenPosition.x, screenPosition.y = newScreenX, newScreenY
+        end
+      end
+    end
+    
+    TICK = TICK - FPS
   end
 end
 
@@ -110,6 +133,9 @@ function home:draw()
   end
   
   camera:draw(self.draw_scene)
+  
+  love.graphics.setColor(CLR.BLACK)
+  love.graphics.rectangle("line", 0, 0, SW, SH)
 end
 
 function home:draw_scene()
@@ -123,6 +149,7 @@ end
 
 function home:initializeLabels()
   labels.title = Label("Home", .5, .1, "center", CLR.BLACK)
+  labels.mousePos = Label("", .1,.1, "left", CLR.BLACK)
 end
 
 function home:initializeFields()
@@ -152,6 +179,14 @@ function home:handleMouse()
     love.mouse.setCursor(CUR.I)
   else
     love.mouse.setCursor()
+  end
+end
+
+function home:confinedToDesktop(newScreenX, newScreenY)
+  if newScreenX > 0 and newScreenX + SW < desktopDimensions.x and newScreenY > 0 and newScreenY + SH < desktopDimensions.y then
+    return true
+  else
+    return false
   end
 end
 

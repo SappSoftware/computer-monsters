@@ -41,6 +41,33 @@ You can access the individual coordinates by ``vec.x`` and ``vec.y``.
         player.position = player.position + player.velocity * dt
     end
 
+List of Functions
+-----------------
+
+* :func:`vector.new(x,y) <vector.new>`
+* :func:`vector.fromPolar(angle, radius) <vector.fromPolar>`
+* :func:`vector.randomDirection(len_min, len_max) <vector.randomDirection>`
+* :func:`vector.isvector(v) <vector.isvector>`
+* :func:`vector:clone() <vector:clone>`
+* :func:`vector:unpack() <vector:unpack>`
+* :func:`vector:permul(other) <vector:permul>`
+* :func:`vector:len() <vector:len>`
+* :func:`vector:toPolar() <vector:toPolar>`
+* :func:`vector:len2() <vector:len2>`
+* :func:`vector:dist(other) <vector:dist>`
+* :func:`vector:dist2(other) <vector:dist2>`
+* :func:`vector:normalized() <vector:normalized>`
+* :func:`vector:normalizeInplace() <vector:normalizeInplace>`
+* :func:`vector:rotated(angle) <vector:rotated>`
+* :func:`vector:rotateInplace(angle) <vector:rotateInplace>`
+* :func:`vector:perpendicular() <vector:perpendicular>`
+* :func:`vector:projectOn(v) <vector:projectOn>`
+* :func:`vector:mirrorOn(v) <vector:mirrorOn>`
+* :func:`vector:cross(other) <vector:cross>`
+* :func:`vector:angleTo(other) <vector:angleTo>`
+* :func:`vector:trimmed(max_length) <vector:trimmed>`
+* :func:`vector:trimInplace(max_length) <vector:trimInplace>`
+
 
 Vector arithmetic
 -----------------
@@ -99,6 +126,34 @@ Create a new vector.
     vector = require "hump.vector"
     a = vector(10,10)
 
+
+.. function:: vector.fromPolar(angle, radius)
+
+   :param number angle: Angle of the vector in radians.
+   :param number radius: Length of the vector (optional, default = 1).
+   :returns: The vector in cartesian coordinates.
+
+
+Create a new vector from polar coordinates.
+The ``angle`` is measured against the vector (1,0), i.e., the x axis.
+
+**Examples**::
+
+    a = vector.polar(math.pi,10)
+
+.. function:: vector.randomDirection(len_min, len_max)
+
+   :param number len_min: Minimum length of the vector (optional, default = 1).
+   :param number len_max: Maximum length of the vector (optional, default = ``len_min``).
+   :returns: A vector pointing in a random direction with a random length between ``len_min`` and ``len_max``.
+
+**Examples**::
+
+    rnd = vector.randomDirection()    -- length is 1
+    rnd = vector.randomDirection(100) -- length is 100
+    rnd = vector.randomDirection(1,5) -- length is a random value between 1 and 5
+
+Sample a vector with random direction and (optional) length.
 
 .. function:: vector.isvector(v)
 
@@ -176,6 +231,19 @@ Get length of the vector, i.e. ``math.sqrt(vec.x * vec.x + vec.y * vec.y)``.
 **Example**::
 
     distance = (a - b):len()
+
+
+.. function:: vector:toPolar()
+
+   :returns: The vector in polar coordinates (angle, radius).
+
+Convert the vector to polar coordinates, i.e., the angle and the radius/lenth.
+
+**Example**::
+
+   -- complex multiplication
+   p, q = a:toPolar(), b:toPolar()
+   c = vector(p.x+q.x, p.y*q.y)
 
 
 .. function:: vector:len2()
@@ -301,7 +369,7 @@ Does not change the input vector, but creates a new vector.
 Rotate a vector in-place. Great to use on intermediate results.
 
 .. warning::
-    Yhis modifies the vector. If in doubt, use :func:`vector:rotated()`.
+    This modifies the vector. If in doubt, use :func:`vector:rotated()`.
 
 **Example**::
 
@@ -414,7 +482,7 @@ direction as the source vector, but has a magnitude smaller or equal to
 ``max_length``.
 
 .. warning::
-    Yhis modifies the vector. If in doubt, use :func:`vector:trimmed()`.
+    This modifies the vector. If in doubt, use :func:`vector:trimmed()`.
 
 
 **Example**::
