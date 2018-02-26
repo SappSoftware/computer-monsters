@@ -1,5 +1,5 @@
 DNA = Class{
-  init = function(self, fatherDNA, motherDNA, numChromosomePairs, numAlleles)
+  init = function(self, numChromosomePairs, numAlleles)
     --chromosome[1] is the chromatids inherited from the father, chromosome[2] is the chromatids inherited from the mother
     --there are 15 chromosome pairs, plus a sex pair
     --males only have one sex chromosome, inherited from their mother, while females have both
@@ -7,25 +7,6 @@ DNA = Class{
     --each allele has a value of 0 or 1 which determines the allele's state
     self.numChromosomePairs = numChromosomePairs or 16
     self.numAlleles = numAlleles or 16
-    if fatherDNA == nil then
-      if motherDNA == nil then
-        self.chromosome = self:generateRandomDNA()
-      else
-        local chromosome = self:generateRandomDNA()
-        self.chromosome = {{},{}}
-        self.chromosome[1] = chromosome[1]
-        local mother_gametes = self:meiosis(motherDNA)
-        chromosome[2] = deepCopy(mother_gametes[love.math.random(1,2)][love.math.random(1,2)])
-      end
-    elseif motherDNA == nil then
-      local chromosome = self:generateRandomDNA()
-      self.chromosome = {{},{}}
-      self.chromosome[2] = chromosome[2]
-      local father_gametes = self:meiosis(fatherDNA)
-      chromosome[1] = deepCopy(father_gametes[love.math.random(1,2)][love.math.random(1,2)])
-    else
-      self.chromosome = self:generateDNAFromParents(fatherDNA, motherDNA)
-    end
   end;
   
   generateRandomDNA = function(self, sex)
