@@ -1,4 +1,4 @@
-home = {}
+breeding = {}
 
 local buttons = {}
 local labels = {}
@@ -9,30 +9,27 @@ local camera = {}
 local desktopDimensions = {}
 local screenPosition = {}
 local activeScreen = nil
-local monster = {}
 
 local mouseLock = {}
 
-function home:init()
+function breeding:init()
   self:initializeButtons()
   self:initializeLabels()
   self:initializeFields()
   --mother = Creature(desktopDimensions.x/3, desktopDimensions.y/2, 100)
   --father = Creature(desktopDimensions.x/2, desktopDimensions.y/3, 100)
-  
+  --monster = Creature(desktopDimensions.x/2, desktopDimensions.y/2, 80, father, mother)
 end
 
-function home:enter(from)
+function breeding:enter(from)
   love.graphics.setBackgroundColor(CLR.WHITE)
   screenPosition.x, screenPosition.y, activeScreen = love.window.getPosition()
   desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
   
   camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
-  
-  monster = Creature(desktopDimensions.x/2, desktopDimensions.y/2, 80)
 end
 
-function home:update(dt)
+function breeding:update(dt)
   
   TICK = TICK + dt
   
@@ -49,7 +46,6 @@ function home:update(dt)
         camera:lookAt(newScreenX+SW/2, newScreenY+SH/2)
         love.window.setPosition(newScreenX, newScreenY, activeScreen)
         screenPosition.x, screenPosition.y = newScreenX, newScreenY
-        
       end
     end
     
@@ -57,7 +53,7 @@ function home:update(dt)
   end
 end
 
-function home:keypressed(key)
+function breeding:keypressed(key)
   for pos, field in pairs(fields) do
     field:keypressed(key)
   end
@@ -66,13 +62,13 @@ function home:keypressed(key)
   end
 end
 
-function home:textinput(text)
+function breeding:textinput(text)
   for pos, field in pairs(fields) do
     field:textinput(text)
   end
 end
 
-function home:mousepressed(mousex, mousey, mouseButton)
+function breeding:mousepressed(mousex, mousey, mouseButton)
   mousePoint:moveTo(mousex, mousey)
   mouseLock = {x = mousex, y = mousey}
   
@@ -89,7 +85,7 @@ function home:mousepressed(mousex, mousey, mouseButton)
   end
 end
 
-function home:mousereleased(mousex, mousey, mouseButton)
+function breeding:mousereleased(mousex, mousey, mouseButton)
   mousePoint:moveTo(mousex, mousey)
   
   if mouseButton == 1 then
@@ -105,11 +101,11 @@ function home:mousereleased(mousex, mousey, mouseButton)
   end
 end
 
-function home:mousemoved(mousex, mousey, dx, dy)
+function breeding:mousemoved(mousex, mousey, dx, dy)
   
 end
 
-function home:draw()
+function breeding:draw()
   drawFPS(fpsCounter)
 
   camera:draw(self.draw_scene)
@@ -126,11 +122,11 @@ function home:draw()
   end
 end
 
-function home:draw_scene()
-  monster:draw()
+function breeding:draw_scene()
+  --monster:draw()
 end
 
-function home:draw_UI()
+function breeding:draw_UI()
   love.graphics.setColor(CLR.WHITE)
   love.graphics.rectangle("fill", 0, 0, SW, SH*.082)
   love.graphics.setColor(CLR.BLACK)
@@ -138,34 +134,34 @@ function home:draw_UI()
   
 end
 
-function home:initializeButtons()
+function breeding:initializeButtons()
   buttons.dragWindow = Button(.974, .025, .05, .05, "", CLR.BLACK)
   buttons.home = Button(.15, .04, .1, .08, "H", CLR.BLACK)
   buttons.adoption = Button(.25, .04, .1, .08, "A", CLR.BLACK)
   buttons.breeding = Button(.35, .04, .1, .08, "B", CLR.BLACK)
   
-  buttons.home.isSelectable = false
+  buttons.breeding.isSelectable = false
   
   buttons.adoption.action = function()
     love.mouse.setCursor()
     Gamestate.switch(adoption)
   end
   
-  buttons.breeding.action = function()
+  buttons.home.action = function()
     love.mouse.setCursor()
-    Gamestate.switch(breeding)
+    Gamestate.switch(home)
   end
 end
 
-function home:initializeLabels()
-  labels.title = Label("Home", .5, .1, "center", CLR.BLACK)
+function breeding:initializeLabels()
+  labels.title = Label("Breeding", .5, .1, "center", CLR.BLACK)
 end
 
-function home:initializeFields()
+function breeding:initializeFields()
   
 end
 
-function home:handleMouse()
+function breeding:handleMouse()
   mousePoint:moveTo(love.mouse.getX(), love.mouse.getY())
   local highlightButton = false
   local highlightField = false
@@ -191,12 +187,12 @@ function home:handleMouse()
   end
 end
 
-function home:confineToDesktop(newScreenX, newScreenY)
+function breeding:confineToDesktop(newScreenX, newScreenY)
   local newX = math.min(desktopDimensions.x-SW, math.max(0, newScreenX))
   local newY = math.min(desktopDimensions.y-SH, math.max(0, newScreenY))
   return newX, newY
 end
 
-function home:quit()
+function breeding:quit()
   
 end

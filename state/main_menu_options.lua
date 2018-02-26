@@ -77,6 +77,9 @@ function main_menu_options:draw()
   for pos, label in pairs(labels) do
     label:draw()
   end
+  
+  love.graphics.setColor(CLR.BLACK)
+  love.graphics.rectangle("line", 0, 0, SW, SH)
 end
 
 function main_menu_options:initializeButtons()

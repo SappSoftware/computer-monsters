@@ -5,8 +5,13 @@ DNA = Class{
     --males only have one sex chromosome, inherited from their mother, while females have both
     --each chromatid contains 16 alleles
     --each allele has a value of 0 or 1 which determines the allele's state
+    self.chromosome = {}
     self.numChromosomePairs = numChromosomePairs or 16
     self.numAlleles = numAlleles or 16
+  end;
+  
+  newRandomDNA = function(self,sex)
+    self.chromosome = self:generateRandomDNA(sex)
   end;
   
   generateRandomDNA = function(self, sex)

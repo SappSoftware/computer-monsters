@@ -1,4 +1,4 @@
-home = {}
+adoption = {}
 
 local buttons = {}
 local labels = {}
@@ -6,39 +6,42 @@ local fields = {}
 
 local camera = {}
 
+local eggs = {}
 local desktopDimensions = {}
 local screenPosition = {}
 local activeScreen = nil
-local monster = {}
+
+local test = {}
 
 local mouseLock = {}
 
-function home:init()
+function adoption:init()
   self:initializeButtons()
   self:initializeLabels()
   self:initializeFields()
-  --mother = Creature(desktopDimensions.x/3, desktopDimensions.y/2, 100)
-  --father = Creature(desktopDimensions.x/2, desktopDimensions.y/3, 100)
   
-end
-
-function home:enter(from)
-  love.graphics.setBackgroundColor(CLR.WHITE)
   screenPosition.x, screenPosition.y, activeScreen = love.window.getPosition()
   desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
   
   camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
   
-  monster = Creature(desktopDimensions.x/2, desktopDimensions.y/2, 80)
+  test = Egg(desktopDimensions.x/2, desktopDimensions.y/2)
+  
+  self:generateEggs()
 end
 
-function home:update(dt)
+function adoption:enter(from)
+  love.graphics.setBackgroundColor(CLR.WHITE)
+  screenPosition.x, screenPosition.y, activeScreen = love.window.getPosition()
+  desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
+  
+  camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
+end
+
+function adoption:update(dt)
   
   TICK = TICK + dt
-  
-  --monster:update(dt)
-  --mother:update(dt)
-  --father:update(dt)
+
   if TICK >= FPS then
     self:handleMouse()
     if buttons.dragWindow.isSelected and love.mouse.isDown(1) then
@@ -49,7 +52,6 @@ function home:update(dt)
         camera:lookAt(newScreenX+SW/2, newScreenY+SH/2)
         love.window.setPosition(newScreenX, newScreenY, activeScreen)
         screenPosition.x, screenPosition.y = newScreenX, newScreenY
-        
       end
     end
     
@@ -57,7 +59,7 @@ function home:update(dt)
   end
 end
 
-function home:keypressed(key)
+function adoption:keypressed(key)
   for pos, field in pairs(fields) do
     field:keypressed(key)
   end
@@ -66,13 +68,13 @@ function home:keypressed(key)
   end
 end
 
-function home:textinput(text)
+function adoption:textinput(text)
   for pos, field in pairs(fields) do
     field:textinput(text)
   end
 end
 
-function home:mousepressed(mousex, mousey, mouseButton)
+function adoption:mousepressed(mousex, mousey, mouseButton)
   mousePoint:moveTo(mousex, mousey)
   mouseLock = {x = mousex, y = mousey}
   
@@ -89,7 +91,7 @@ function home:mousepressed(mousex, mousey, mouseButton)
   end
 end
 
-function home:mousereleased(mousex, mousey, mouseButton)
+function adoption:mousereleased(mousex, mousey, mouseButton)
   mousePoint:moveTo(mousex, mousey)
   
   if mouseButton == 1 then
@@ -105,16 +107,12 @@ function home:mousereleased(mousex, mousey, mouseButton)
   end
 end
 
-function home:mousemoved(mousex, mousey, dx, dy)
+function adoption:mousemoved(mousex, mousey, dx, dy)
   
 end
 
-function home:draw()
+function adoption:draw()
   drawFPS(fpsCounter)
-
-  camera:draw(self.draw_scene)
-  
-  self:draw_UI()
   for key, button in pairs(buttons) do
     button:draw()
   end
@@ -124,31 +122,32 @@ function home:draw()
   for pos, label in pairs(labels) do
     label:draw()
   end
-end
-
-function home:draw_scene()
-  monster:draw()
-end
-
-function home:draw_UI()
-  love.graphics.setColor(CLR.WHITE)
-  love.graphics.rectangle("fill", 0, 0, SW, SH*.082)
+  
+  camera:draw(self.draw_scene)
+  
   love.graphics.setColor(CLR.BLACK)
   love.graphics.rectangle("line", 0, 0, SW, SH)
-  
 end
 
-function home:initializeButtons()
+function adoption:draw_scene()
+  for _, egg in ipairs(eggs) do
+    egg:draw()
+  end
+  
+  --test:draw()
+end
+
+function adoption:initializeButtons()
   buttons.dragWindow = Button(.974, .025, .05, .05, "", CLR.BLACK)
   buttons.home = Button(.15, .04, .1, .08, "H", CLR.BLACK)
   buttons.adoption = Button(.25, .04, .1, .08, "A", CLR.BLACK)
   buttons.breeding = Button(.35, .04, .1, .08, "B", CLR.BLACK)
   
-  buttons.home.isSelectable = false
+  buttons.adoption.isSelectable = false
   
-  buttons.adoption.action = function()
+  buttons.home.action = function()
     love.mouse.setCursor()
-    Gamestate.switch(adoption)
+    Gamestate.switch(home)
   end
   
   buttons.breeding.action = function()
@@ -157,15 +156,15 @@ function home:initializeButtons()
   end
 end
 
-function home:initializeLabels()
-  labels.title = Label("Home", .5, .1, "center", CLR.BLACK)
+function adoption:initializeLabels()
+  labels.title = Label("Adoption", .5, .1, "center", CLR.BLACK)
 end
 
-function home:initializeFields()
+function adoption:initializeFields()
   
 end
 
-function home:handleMouse()
+function adoption:handleMouse()
   mousePoint:moveTo(love.mouse.getX(), love.mouse.getY())
   local highlightButton = false
   local highlightField = false
@@ -191,12 +190,27 @@ function home:handleMouse()
   end
 end
 
-function home:confineToDesktop(newScreenX, newScreenY)
+function adoption:confineToDesktop(newScreenX, newScreenY)
   local newX = math.min(desktopDimensions.x-SW, math.max(0, newScreenX))
   local newY = math.min(desktopDimensions.y-SH, math.max(0, newScreenY))
   return newX, newY
 end
 
-function home:quit()
+function adoption:generateEggs()
+  for i=1, 10 do
+    local x = i*(desktopDimensions.x/11)
+    local y = desktopDimensions.y/2
+    local egg = Egg(x,y)
+    egg.DNA = DNA()
+    if love.math.random(0,1) == 0 then 
+      egg.DNA:newRandomDNA("male")
+    else
+      egg.DNA:newRandomDNA("female")
+    end
+    table.insert(eggs,egg)
+  end
+end
+
+function adoption:quit()
   
 end

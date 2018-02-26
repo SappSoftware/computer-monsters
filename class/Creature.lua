@@ -9,8 +9,8 @@ Creature = Class{
     self.mother = mother or {}
     self.father = father or {}
     
-    self.DNA = DNA(16, 16)
-    self.sex = self:determineSex()
+    self.DNA = {}
+    self.sex = {}
     self.mask = HC.circle(x,y,size/2)
     --self.cage = cage
   end;

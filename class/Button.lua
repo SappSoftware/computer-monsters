@@ -53,7 +53,10 @@ Button = Class{
   mousepressed = function(self, mouseButton)
     if self.isHighlighted and mouseButton == 1 then
       self.isSelected = true
+    else
+      self.isSelected = false
     end
+    
   end;
   
   mousereleased = function(self, mouseButton)

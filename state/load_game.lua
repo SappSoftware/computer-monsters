@@ -77,6 +77,9 @@ function load_game:draw()
   for pos, label in pairs(labels) do
     label:draw()
   end
+  
+  love.graphics.setColor(CLR.BLACK)
+  love.graphics.rectangle("line", 0, 0, SW, SH)
 end
 
 function load_game:initializeButtons()

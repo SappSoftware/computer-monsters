@@ -22,6 +22,7 @@ require "class/Button"
 require "class/FillableField"
 require "class/Label"
 
+require "class/Egg"
 require "class/Creature"
 require "class/DNA"
 
@@ -29,7 +30,10 @@ require "state/main_menu"
 require "state/main_menu_options"
 require "state/new_game"
 require "state/load_game"
+require "state/quit_game"
 require "state/home"
+require "state/adoption"
+require "state/breeding"
 
 sprites = {}
 
@@ -37,6 +41,8 @@ SW = love.graphics.getWidth()
 SH = love.graphics.getHeight()
 
 mousePoint = {}
+
+pets = {}
 
 TICK = 0
 FPS = 1/60
@@ -51,7 +57,7 @@ function love.load(arg)
   love.graphics.setFont(FNT.DEFAULT)
   love.graphics.setBackgroundColor(CLR.BLACK)
   loadImages()
-  fpsCounter = Label("FPS", .015, .03, "left", CLR.BLACK)
+  fpsCounter = Label("FPS", .015, .97, "left", CLR.BLACK)
   Gamestate.switch(main_menu)
 end
 
@@ -69,6 +75,7 @@ end
 
 function loadImages()
   sprites.monster = love.graphics.newImage("images/monster.png")
+  sprites.egg = love.graphics.newImage("images/egg.png")
 end
 
 function loadServerData()
