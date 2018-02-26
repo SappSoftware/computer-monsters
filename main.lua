@@ -1,4 +1,4 @@
-debug = false
+debug = true
 
 HC = require "hc"
 Shape = require "hc.shapes"
@@ -23,6 +23,7 @@ require "class/FillableField"
 require "class/Label"
 
 require "class/Creature"
+require "class/DNA"
 
 require "state/main_menu"
 require "state/main_menu_options"
@@ -42,6 +43,7 @@ FPS = 1/60
 
 function love.load(arg)
   if debug then require("mobdebug").start() end
+  love.math.setRandomSeed(love.timer.getTime())
   Gamestate.registerEvents()
   love.keyboard.setKeyRepeat(true)
   FNT.DEFAULT = love.graphics.newFont(math.floor(SH/32))

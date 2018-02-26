@@ -1,12 +1,17 @@
 Creature = Class{
-  init = function(self, x, y, size, cage)
+  init = function(self, x, y, size, father, mother)
     self.pos = Vector(x,y)
     self.size = size
     self.sprite = sprites.monster
     self.rotation = 0
     self.scale = self.size/self.sprite:getHeight()
     self.offset = Vector(self.sprite:getWidth()/2, self.sprite:getHeight()/2)
-    --self.mask = HC.circle(x,y,size/2)
+    self.mother = mother or {}
+    self.father = father or {}
+    
+    self.DNA = DNA(self.father.DNA, self.mother.DNA, 16, 16)
+    self.sex = self:determineSex()
+    self.mask = HC.circle(x,y,size/2)
     --self.cage = cage
   end;
   
@@ -19,7 +24,15 @@ Creature = Class{
   draw = function(self)
     love.graphics.setColor(CLR.WHITE)
     love.graphics.draw(self.sprite, self.pos.x, self.pos.y, self.rotation, self.scale, self.scale, self.offset.x, self.offset.y)
-    --love.graphics.setColor(CLR.RED)
-    --self.mask:draw()
+    love.graphics.setColor(CLR.RED)
+    self.mask:draw()
+  end;
+  
+  determineSex = function(self)
+    if #self.DNA.chromosome[1] == self.DNA.numChromosomePairs then
+      return "female"
+    else
+      return "male"
+    end
   end;
 }

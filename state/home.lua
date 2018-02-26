@@ -6,6 +6,8 @@ local fields = {}
 
 local camera = {}
 
+local mother = {}
+local father = {}
 local monster = {}
 local desktopDimensions = {}
 local screenPosition = {}
@@ -24,7 +26,9 @@ function home:init()
   
   camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
   
-  monster = Creature(desktopDimensions.x/2, desktopDimensions.y/2, 80)
+  mother = Creature(desktopDimensions.x/3, desktopDimensions.y/2, 100)
+  father = Creature(desktopDimensions.x/2, desktopDimensions.y/3, 100)
+  monster = Creature(desktopDimensions.x/2, desktopDimensions.y/2, 80, father, mother)
   center = {desktopDimensions.x/2, desktopDimensions.y/2}
 end
 
@@ -37,6 +41,8 @@ function home:update(dt)
   TICK = TICK + dt
   
   monster:update(dt)
+  mother:update(dt)
+  father:update(dt)
   --[[
   if buttons.dragWindow.isSelected and love.mouse.isDown(1) then
       local x, y = mousePoint:center()
@@ -55,12 +61,10 @@ function home:update(dt)
       local gx, gy = globalMouse:getGlobalMousePosition() -- global mouse position
       --local lx, ly = globalMouse:toScreenPosition(gx,gy) -- local mouse position
       if type(gx) == "number" and type(gy) == "number" then
-        local newScreenX, newScreenY = gx - mouseLock.x, gy - mouseLock.y
-        if self:confinedToDesktop(newScreenX, newScreenY) == true then
-          camera:lookAt(newScreenX+SW/2, newScreenY+SH/2)
-          love.window.setPosition(newScreenX, newScreenY, activeScreen)
-          screenPosition.x, screenPosition.y = newScreenX, newScreenY
-        end
+        local newScreenX, newScreenY = self:confineToDesktop(gx - mouseLock.x, gy - mouseLock.y)
+        camera:lookAt(newScreenX+SW/2, newScreenY+SH/2)
+        love.window.setPosition(newScreenX, newScreenY, activeScreen)
+        screenPosition.x, screenPosition.y = newScreenX, newScreenY
       end
     end
     
@@ -182,12 +186,10 @@ function home:handleMouse()
   end
 end
 
-function home:confinedToDesktop(newScreenX, newScreenY)
-  if newScreenX > 0 and newScreenX + SW < desktopDimensions.x and newScreenY > 0 and newScreenY + SH < desktopDimensions.y then
-    return true
-  else
-    return false
-  end
+function home:confineToDesktop(newScreenX, newScreenY)
+  local newX = math.min(desktopDimensions.x-SW, math.max(0, newScreenX))
+  local newY = math.min(desktopDimensions.y-SH, math.max(0, newScreenY))
+  return newX, newY
 end
 
 function home:quit()
