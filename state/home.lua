@@ -23,7 +23,7 @@ function home:init()
 end
 
 function home:enter(from)
-  love.graphics.setBackgroundColor(CLR.WHITE)
+  love.graphics.setBackgroundColor(CLR.BLACK)
   screenPosition.x, screenPosition.y, activeScreen = love.window.getPosition()
   desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
   

@@ -31,7 +31,7 @@ function adoption:init()
 end
 
 function adoption:enter(from)
-  love.graphics.setBackgroundColor(CLR.WHITE)
+  love.graphics.setBackgroundColor(CLR.BLACK)
   screenPosition.x, screenPosition.y, activeScreen = love.window.getPosition()
   desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
   
@@ -113,6 +113,12 @@ end
 
 function adoption:draw()
   drawFPS(fpsCounter)
+  
+  
+  camera:draw(self.draw_scene)
+  
+  self:draw_UI()
+  
   for key, button in pairs(buttons) do
     button:draw()
   end
@@ -122,19 +128,19 @@ function adoption:draw()
   for pos, label in pairs(labels) do
     label:draw()
   end
-  
-  camera:draw(self.draw_scene)
-  
-  love.graphics.setColor(CLR.BLACK)
-  love.graphics.rectangle("line", 0, 0, SW, SH)
 end
 
 function adoption:draw_scene()
   for _, egg in ipairs(eggs) do
     egg:draw()
   end
-  
-  --test:draw()
+end
+
+function adoption:draw_UI()
+  love.graphics.setColor(CLR.WHITE)
+  love.graphics.rectangle("fill", 0, 0, SW, SH*.082)
+  love.graphics.setColor(CLR.BLACK)
+  love.graphics.rectangle("line", 0, 0, SW, SH)
 end
 
 function adoption:initializeButtons()
