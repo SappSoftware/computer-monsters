@@ -19,7 +19,47 @@ Gene = Class{
     self.recessive = math.abs(self.dominant-1)
   end;
   
+  state = function(self, chromosome)
+    if self.dominance_type == "normal" then
+      if chromosome[1][self.markers[1]] ~= nil then
+        if chromosome[1][self.markers[1]][self.markers[2]] == self.recessive and chromosome[2][self.markers[1]][self.markers[2]] == self.recessive then
+          return 0
+        else
+          return 1
+        end
+      else
+        if chromosome[2][self.markers[1]][self.markers[2]] == self.recessive then
+          return 0
+        else
+          return 1
+        end
+      end
+    elseif self.dominance_type == "codominant" then
+      if chromosome[1][self.markers[1]] ~= nil then
+        if chromosome[1][self.markers[1]][self.markers[2]] == self.recessive and chromosome[2][self.markers[1]][self.markers[2]] == self.recessive then
+          return 0
+        elseif chromosome[1][self.markers[1]][self.markers[2]] == self.dominant and chromosome[2][self.markers[1]][self.markers[2]] == self.dominant then
+          return 2
+        else
+          return 1
+        end
+      else
+        if chromosome[2][self.markers[1]][self.markers[2]] == self.recessive then
+          return 0
+        else
+          return 1
+        end
+      end
+    else
+      self:multifactorial()
+    end
+  end;
+  
   expression = function(self)
+    
+  end;
+  
+  multifactorial = function(self)
     
   end;
 }

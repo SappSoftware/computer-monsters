@@ -1,6 +1,7 @@
 DNA = Class{
   init = function(self, numChromosomePairs, numAlleles)
     --chromosome[1] is the chromatids inherited from the father, chromosome[2] is the chromatids inherited from the mother
+    --chromosome is a 3d table, where chromosome[1][5][7] is the seventh gene of the fifth chromosome of the father-inherited half
     --there are 15 chromosome pairs, plus a sex pair
     --males only have one sex chromosome, inherited from their mother, while females have both
     --each chromatid contains 16 alleles

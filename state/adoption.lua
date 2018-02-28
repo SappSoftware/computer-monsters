@@ -206,13 +206,15 @@ function adoption:generateEggs()
   for i=1, 10 do
     local x = i*(desktopDimensions.x/11)
     local y = desktopDimensions.y/2
-    local egg = Egg(x,y)
+    local egg = Egg(x, y, species_list.alpha)
     egg.DNA = DNA()
     if love.math.random(0,1) == 0 then 
       egg.DNA:newRandomDNA("male")
     else
       egg.DNA:newRandomDNA("female")
     end
+    egg:determineColor()
+    egg:determineSex()
     table.insert(eggs,egg)
   end
 end

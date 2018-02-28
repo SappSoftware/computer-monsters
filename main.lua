@@ -1,4 +1,4 @@
-debug = false
+debug = true
 
 HC = require "hc"
 Shape = require "hc.shapes"
@@ -25,6 +25,8 @@ require "class/Label"
 require "class/Egg"
 require "class/Creature"
 require "class/DNA"
+require "class/Species"
+require "class/Gene"
 
 require "state/main_menu"
 require "state/main_menu_options"
@@ -44,6 +46,8 @@ mousePoint = {}
 
 pets = {}
 
+species_list = {}
+
 TICK = 0
 FPS = 1/60
 
@@ -56,6 +60,8 @@ function love.load(arg)
   mousePoint = HC.point(0,0)
   love.graphics.setFont(FNT.DEFAULT)
   love.graphics.setBackgroundColor(CLR.BLACK)
+  species_list = loadSpeciesData()
+  species_list.alpha = Species("alpha")
   loadImages()
   fpsCounter = Label("FPS", .015, .97, "left", CLR.BLACK)
   Gamestate.switch(main_menu)
@@ -78,14 +84,14 @@ function loadImages()
   sprites.egg = love.graphics.newImage("images/egg.png")
 end
 
-function loadServerData()
+function loadSpeciesData()
   local data = {}
-  love.filesystem.setIdentity("Zabutongl_Server")
-  if love.filesystem.exists("player_list.lua") then
-    local import_string = love.filesystem.read("player_list.lua")
+  love.filesystem.setIdentity("computer_monsters")
+  if love.filesystem.exists("species_list.lua") then
+    local import_string = love.filesystem.read("species_list.lua")
     data = Tserial.unpack(import_string)
   else
-    love.filesystem.write("player_list.lua", Tserial.pack(data))
+    love.filesystem.write("species_list.lua", Tserial.pack(data))
   end
   
   return data
