@@ -1,0 +1,28 @@
+GENE_LIST = {
+  hue1 = {dominance = "normal", expression = function(creature, gene_state) creature.hue = creature.hue + gene_state end},
+  hue2 = {dominance = "normal", expression = function(creature, gene_state) creature.hue = creature.hue + gene_state*2 end},
+  hue4 = {dominance = "normal", expression = function(creature, gene_state) creature.hue = creature.hue + gene_state*4 end},
+  hue8 = {dominance = "normal", expression = function(creature, gene_state) creature.hue = creature.hue + gene_state*8 end},
+  hue16 = {dominance = "normal", expression = function(creature, gene_state) creature.hue = creature.hue + gene_state*16 end},
+  hue32 = {dominance = "normal", expression = function(creature, gene_state) creature.hue = creature.hue + gene_state*32 end},
+  hue64 = {dominance = "normal", expression = function(creature, gene_state) creature.hue = creature.hue + gene_state*64 end},
+  hue128 = {dominance = "normal", expression = function(creature, gene_state) creature.hue = creature.hue + gene_state*128 end},
+  
+  saturation1 = {dominance = "normal", expression = function(creature, gene_state) creature.saturation = creature.saturation + gene_state end},
+  saturation2 = {dominance = "normal", expression = function(creature, gene_state) creature.saturation = creature.saturation + gene_state*2 end},
+  saturation4 = {dominance = "normal", expression = function(creature, gene_state) creature.saturation = creature.saturation + gene_state*4 end},
+  saturation8 = {dominance = "normal", expression = function(creature, gene_state) creature.saturation = creature.saturation + gene_state*8 end},
+  saturation16 = {dominance = "normal", expression = function(creature, gene_state) creature.saturation = creature.saturation + gene_state*16 end},
+  saturation32 = {dominance = "normal", expression = function(creature, gene_state) creature.saturation = creature.saturation + gene_state*32 end},
+  saturation64 = {dominance = "normal", expression = function(creature, gene_state) creature.saturation = creature.saturation + gene_state*64 end},
+  saturation128 = {dominance = "normal", expression = function(creature, gene_state) creature.saturation = creature.saturation + gene_state*128 end},
+  
+  lightness1 = {dominance = "normal", expression = function(creature, gene_state) creature.lightness = creature.lightness + gene_state end},
+  lightness2 = {dominance = "normal", expression = function(creature, gene_state) creature.lightness = creature.lightness + gene_state*2 end},
+  lightness4 = {dominance = "normal", expression = function(creature, gene_state) creature.lightness = creature.lightness + gene_state*4 end},
+  lightness8 = {dominance = "normal", expression = function(creature, gene_state) creature.lightness = creature.lightness + gene_state*8 end},
+  lightness16 = {dominance = "normal", expression = function(creature, gene_state) creature.lightness = creature.lightness + gene_state*16 end},
+  lightness32 = {dominance = "normal", expression = function(creature, gene_state) creature.lightness = creature.lightness + gene_state*32 end},
+  lightness64 = {dominance = "normal", expression = function(creature, gene_state) creature.lightness = creature.lightness + gene_state*64 end},
+  lightness128 = {dominance = "normal", expression = function(creature, gene_state) creature.lightness = creature.lightness + gene_state*128 end},
+}
