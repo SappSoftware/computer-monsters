@@ -15,6 +15,7 @@ require "lib/CLR"
 require "lib/FNT"
 require "lib/CUR"
 require "lib/helper"
+require "lib/GENE_LIST"
 
 require "Tserial"
 
@@ -61,7 +62,9 @@ function love.load(arg)
   love.graphics.setFont(FNT.DEFAULT)
   love.graphics.setBackgroundColor(CLR.BLACK)
   species_list = loadSpeciesData()
-  species_list.alpha = Species("alpha")
+  generateSpecies("Alpha")
+  generateSpecies("Beta")
+  --updateSpeciesData()
   loadImages()
   fpsCounter = Label("FPS", .015, .97, "left", CLR.BLACK)
   Gamestate.switch(main_menu)
@@ -95,4 +98,25 @@ function loadSpeciesData()
   end
   
   return data
+end
+
+function updateSpeciesData()
+  love.filesystem.write("species_list.lua", Tserial.pack(species_list))
+end
+
+function generateSpecies(name)
+  if species_list[name] == nil then
+    local newSpecies = Species(name)
+    for gene_name, gene_data in pairs(GENE_LIST) do
+      local markers = {love.math.random(1,16),love.math.random(1,16)}
+      local dominant = love.math.random(0,1)
+      local newGene = Gene(gene_name, markers, gene_data.dominance, dominant)
+      newGene.expression = gene_data.expression
+      if gene_data.dominance == "multifactorial" then
+        newGene.multifactorial = gene_data.multifactorial
+      end
+      newSpecies.genes[gene_name] = newGene
+    end
+    species_list[name] = newSpecies
+  end
 end

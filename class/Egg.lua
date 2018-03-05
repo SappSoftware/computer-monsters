@@ -15,9 +15,14 @@ Egg = Class{
     self.scale = self.size/self.sprite:getHeight()
     self.offset = Vector(self.sprite:getWidth()/2, self.sprite:getHeight()/2)
     
+    self.hue = 0
+    self.saturation = 0
+    self.lightness = 0
     self.color = CLR.WHITE
     
     self.mask = HC.circle(x,y,self.size/2)
+    
+    --self:expressGenes()
   end;
   
   draw = function(self)
@@ -29,15 +34,17 @@ Egg = Class{
     self.mask:draw()
   end;
   
+  expressGenes = function(self)
+    for gene_name, gene in pairs(self.species.genes) do
+      local gene_state = gene:state(self.DNA.chromosome)
+      gene.expression(self, gene_state)
+    end
+  end;
+  
   determineColor = function(self)
-    local hue = 0
-    local saturation = 255
-    local lightness = 128
-    
-    hue = self.species.gene_expressions.hue_1:state(self.DNA.chromosome)*1 + self.species.gene_expressions.hue_2:state(self.DNA.chromosome)*2 + self.species.gene_expressions.hue_4:state(self.DNA.chromosome)*4 + self.species.gene_expressions.hue_8:state(self.DNA.chromosome)*8 + self.species.gene_expressions.hue_16:state(self.DNA.chromosome)*16 + self.species.gene_expressions.hue_32:state(self.DNA.chromosome)*32 + self.species.gene_expressions.hue_64:state(self.DNA.chromosome)*64 + self.species.gene_expressions.hue_128:state(self.DNA.chromosome)*128
     
     local color = {}
-    color[1], color[2], color[3], color[4] = HSL(hue, saturation, lightness, 255)
+    color[1], color[2], color[3], color[4] = HSL(self.hue, self.saturation, self.lightness, 255)
     self.color = color
   end;
   

@@ -22,32 +22,32 @@ Gene = Class{
   state = function(self, chromosome)
     if self.dominance_type == "normal" then
       if chromosome[1][self.markers[1]] ~= nil then
-        if chromosome[1][self.markers[1]][self.markers[2]] == self.recessive and chromosome[2][self.markers[1]][self.markers[2]] == self.recessive then
-          return 0
+        if chromosome[1][self.markers[1]][self.markers[2]] == 0 and chromosome[2][self.markers[1]][self.markers[2]] == 0 then
+          return self.recessive
         else
-          return 1
+          return self.dominant
         end
       else
-        if chromosome[2][self.markers[1]][self.markers[2]] == self.recessive then
-          return 0
+        if chromosome[2][self.markers[1]][self.markers[2]] == 0 then
+          return self.recessive
         else
-          return 1
+          return self.dominant
         end
       end
     elseif self.dominance_type == "codominant" then
       if chromosome[1][self.markers[1]] ~= nil then
-        if chromosome[1][self.markers[1]][self.markers[2]] == self.recessive and chromosome[2][self.markers[1]][self.markers[2]] == self.recessive then
-          return 0
-        elseif chromosome[1][self.markers[1]][self.markers[2]] == self.dominant and chromosome[2][self.markers[1]][self.markers[2]] == self.dominant then
-          return 2
+        if chromosome[1][self.markers[1]][self.markers[2]] == 0 and chromosome[2][self.markers[1]][self.markers[2]] == 0 then
+          return self.recessive*2
+        elseif chromosome[1][self.markers[1]][self.markers[2]] == 1 and chromosome[2][self.markers[1]][self.markers[2]] == 1 then
+          return self.dominant*2
         else
-          return 1
+          return self.dominant+self.recessive
         end
       else
-        if chromosome[2][self.markers[1]][self.markers[2]] == self.recessive then
-          return 0
+        if chromosome[2][self.markers[1]][self.markers[2]] == 0 then
+          return self.recessive
         else
-          return 1
+          return self.dominant
         end
       end
     else
