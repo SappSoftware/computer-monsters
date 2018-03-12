@@ -24,10 +24,6 @@ function adoption:init()
   desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
   
   camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
-  
-  test = Egg(desktopDimensions.x/2, desktopDimensions.y/2)
-  
-  self:generateEggs()
 end
 
 function adoption:enter(from)
@@ -36,6 +32,8 @@ function adoption:enter(from)
   desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
   
   camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
+  
+  self:generateEggs()
 end
 
 function adoption:update(dt)
@@ -206,7 +204,7 @@ function adoption:generateEggs()
   for i=1, 10 do
     local x = i*(desktopDimensions.x/11)
     local y = desktopDimensions.y/2
-    local egg = Egg(x, y, species_list["Alpha"])
+    local egg = Creature(x, y, species_list["Alpha"])
     egg.DNA = DNA()
     if love.math.random(0,1) == 0 then 
       egg.DNA:newRandomDNA("male")

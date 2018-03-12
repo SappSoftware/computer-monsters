@@ -1,4 +1,4 @@
-debug = true
+debug = false
 
 HC = require "hc"
 Shape = require "hc.shapes"
@@ -23,7 +23,6 @@ require "class/Button"
 require "class/FillableField"
 require "class/Label"
 
-require "class/Egg"
 require "class/Creature"
 require "class/DNA"
 require "class/Species"
@@ -107,8 +106,22 @@ end
 function generateSpecies(name)
   if species_list[name] == nil then
     local newSpecies = Species(name)
+    local taken_markers = {}
     for gene_name, gene_data in pairs(GENE_LIST) do
-      local markers = {love.math.random(1,16),love.math.random(1,16)}
+      local markerAvailable = false
+      local markers = {}
+      while markerAvailable == false do
+        markers = {love.math.random(1,16),love.math.random(1,16)}
+        markerAvailable = true
+        for i, old_marker in ipairs(taken_markers) do
+          if old_marker[1] == markers[1] and old_marker[2] == markers[2] then
+            markerAvailable = false
+            break
+          end
+        end
+      end
+      
+      table.insert(taken_markers,markers)
       local dominant = love.math.random(0,1)
       local newGene = Gene(gene_name, markers, gene_data.dominance, dominant)
       newGene.expression = gene_data.expression

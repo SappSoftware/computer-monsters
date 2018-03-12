@@ -29,7 +29,17 @@ function home:enter(from)
   
   camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
   
-  monster = Creature(desktopDimensions.x/2, desktopDimensions.y/2, 80)
+  monster = Creature(desktopDimensions.x/2, desktopDimensions.y/2, species_list["Alpha"])
+  monster.DNA = DNA()
+  if love.math.random(0,1) == 0 then 
+    monster.DNA:newRandomDNA("male")
+  else
+    monster.DNA:newRandomDNA("female")
+  end
+  monster:expressGenes()
+  monster:determineColor()
+  monster:determineSex()
+  monster.state = "adult"
 end
 
 function home:update(dt)

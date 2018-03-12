@@ -1,17 +1,37 @@
 Creature = Class{
-  init = function(self, x, y, size, father, mother)
+  init = function(self, x, y, species, father, mother)
     self.pos = Vector(x,y)
-    self.size = size
-    self.sprite = sprites.monster
+    self.size = 80
+    
+    self.sprite = {}
+    self.sprite["egg"] = sprites.egg
+    self.sprite["adult"] = sprites.monster
+    
     self.rotation = 0
-    self.scale = self.size/self.sprite:getHeight()
-    self.offset = Vector(self.sprite:getWidth()/2, self.sprite:getHeight()/2)
+    
+    self.scale = {}
+    self.scale["egg"] = self.size/self.sprite["egg"]:getHeight()
+    self.scale["adult"] = self.size/self.sprite["adult"]:getHeight()
+    
+    self.offset = {}
+    self.offset["egg"] = Vector(self.sprite["egg"]:getWidth()/2, self.sprite["egg"]:getHeight()/2)
+    self.offset["adult"] = Vector(self.sprite["adult"]:getWidth()/2, self.sprite["adult"]:getHeight()/2)
+    
     self.mother = mother or {}
     self.father = father or {}
     
+    self.state = "egg"
+    
+    self.species = species
+    
     self.DNA = {}
-    self.sex = {}
-    self.mask = HC.circle(x,y,size/2)
+    
+    self.hue = 0
+    self.saturation = 0
+    self.lightness = 0
+    self.color = CLR.WHITE
+    self.sex = ""
+    self.mask = HC.circle(self.pos.x,self.pos.y,self.size/2)
     --self.cage = cage
   end;
   
@@ -22,17 +42,33 @@ Creature = Class{
   end;
   
   draw = function(self)
-    love.graphics.setColor(CLR.WHITE)
-    love.graphics.draw(self.sprite, self.pos.x, self.pos.y, self.rotation, self.scale, self.scale, self.offset.x, self.offset.y)
+    love.graphics.setColor(self.color)
+    love.graphics.draw(self.sprite[self.state], self.pos.x, self.pos.y, self.rotation, self.scale[self.state], self.scale[self.state], self.offset[self.state].x, self.offset[self.state].y)
     love.graphics.setColor(CLR.RED)
     self.mask:draw()
+    love.graphics.setColor(CLR.BLACK)
+    love.graphics.print(self.sex, self.pos.x, self.pos.y)
+  end;
+  
+  expressGenes = function(self)
+    for gene_name, gene in pairs(self.species.genes) do
+      local gene_state = gene:state(self.DNA.chromosome)
+      gene.expression(self, gene_state)
+    end
+  end;
+  
+  determineColor = function(self)
+    
+    local color = {}
+    color[1], color[2], color[3], color[4] = HSL(self.hue, self.saturation, self.lightness, 255)
+    self.color = color
   end;
   
   determineSex = function(self)
-    if #self.DNA.chromosome[1] == self.DNA.numChromosomePairs then
-      return "female"
+    if self.DNA.chromosome[1][16] == nil then
+      self.sex = "female"
     else
-      return "male"
+      self.sex = "male"
     end
   end;
 }
