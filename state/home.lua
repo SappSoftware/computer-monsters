@@ -17,8 +17,6 @@ function home:init()
   self:initializeButtons()
   self:initializeLabels()
   self:initializeFields()
-  --mother = Creature(desktopDimensions.x/3, desktopDimensions.y/2, 100)
-  --father = Creature(desktopDimensions.x/2, desktopDimensions.y/3, 100)
   
 end
 

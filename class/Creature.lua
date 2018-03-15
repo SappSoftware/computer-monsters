@@ -31,7 +31,15 @@ Creature = Class{
     self.lightness = 0
     self.color = CLR.WHITE
     self.sex = ""
-    self.mask = HC.circle(self.pos.x,self.pos.y,self.size/2)
+    --self.mask = HC.circle(self.pos.x,self.pos.y,self.size/2)
+    self.mask = HC.polygon(self.pos.x+0.35*self.size*math.cos(0),self.pos.y+self.size/2*math.sin(0), 
+                           self.pos.x+0.35*self.size*math.cos(math.pi/4),self.pos.y+self.size/2*math.sin(math.pi/4),
+                           self.pos.x+0.35*self.size*math.cos(2*math.pi/4),self.pos.y+self.size/2*math.sin(2*math.pi/4),
+                           self.pos.x+0.35*self.size*math.cos(3*math.pi/4),self.pos.y+self.size/2*math.sin(3*math.pi/4),
+                           self.pos.x+0.35*self.size*math.cos(4*math.pi/4),self.pos.y+self.size/2*math.sin(4*math.pi/4),
+                           self.pos.x+0.35*self.size*math.cos(5*math.pi/4),self.pos.y+self.size/2*math.sin(5*math.pi/4),
+                           self.pos.x+0.35*self.size*math.cos(6*math.pi/4),self.pos.y+self.size/2*math.sin(6*math.pi/4),
+                           self.pos.x+0.35*self.size*math.cos(7*math.pi/4),self.pos.y+self.size/2*math.sin(7*math.pi/4))
     --self.cage = cage
   end;
   
@@ -44,8 +52,8 @@ Creature = Class{
   draw = function(self)
     love.graphics.setColor(self.color)
     love.graphics.draw(self.sprite[self.state], self.pos.x, self.pos.y, self.rotation, self.scale[self.state], self.scale[self.state], self.offset[self.state].x, self.offset[self.state].y)
-    love.graphics.setColor(CLR.RED)
-    self.mask:draw()
+    --love.graphics.setColor(CLR.RED)
+    --self.mask:draw()
     love.graphics.setColor(CLR.BLACK)
     love.graphics.print(self.sex, self.pos.x, self.pos.y)
   end;

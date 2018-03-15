@@ -27,7 +27,7 @@ function adoption:init()
 end
 
 function adoption:enter(from)
-  love.graphics.setBackgroundColor(CLR.BLACK)
+  love.graphics.setBackgroundColor(CLR.WHITE)
   screenPosition.x, screenPosition.y, activeScreen = love.window.getPosition()
   desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
   
@@ -201,20 +201,33 @@ function adoption:confineToDesktop(newScreenX, newScreenY)
 end
 
 function adoption:generateEggs()
-  for i=1, 10 do
-    local x = i*(desktopDimensions.x/11)
-    local y = desktopDimensions.y/2
+  eggs = {}
+  
+  while #eggs < 20 do
+    local x = love.math.random(40, desktopDimensions.x-40)
+    local y = love.math.random(60, desktopDimensions.y-60)
     local egg = Creature(x, y, species_list["Alpha"])
-    egg.DNA = DNA()
-    if love.math.random(0,1) == 0 then 
-      egg.DNA:newRandomDNA("male")
-    else
-      egg.DNA:newRandomDNA("female")
+    local goodEgg = true
+    if #eggs > 0 then
+      for i, oldEgg in ipairs(eggs) do
+        if egg.mask:collidesWith(oldEgg.mask) == true then
+          goodEgg = false
+          break
+        end
+      end
     end
-    egg:expressGenes()
-    egg:determineColor()
-    egg:determineSex()
-    table.insert(eggs,egg)
+    if goodEgg == true then
+      egg.DNA = DNA()
+      if love.math.random(0,1) == 0 then 
+        egg.DNA:newRandomDNA("male")
+      else
+        egg.DNA:newRandomDNA("female")
+      end
+      egg:expressGenes()
+      egg:determineColor()
+      egg:determineSex()
+      table.insert(eggs,egg)
+    end
   end
 end
 
