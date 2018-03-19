@@ -11,6 +11,9 @@ local screenPosition = {}
 local activeScreen = nil
 local monster = {}
 
+local ui_mask = {}
+local play_mask = {}
+
 local mouseLock = {}
 
 function home:init()
@@ -18,6 +21,8 @@ function home:init()
   self:initializeLabels()
   self:initializeFields()
   
+  ui_mask = HC.rectangle(0,0, SW, SH*.082)
+  play_mask = HC.rectangle(0, SH*.082, SW, SH*.918)
 end
 
 function home:enter(from)
@@ -75,6 +80,7 @@ end
 
 function home:mousepressed(mousex, mousey, mouseButton)
   mousePoint:moveTo(mousex, mousey)
+  worldMousePoint:moveTo(camera:mousePosition())
   mouseLock = {x = mousex, y = mousey}
   
   if mouseButton == 1 then
@@ -87,6 +93,8 @@ function home:mousepressed(mousex, mousey, mouseButton)
       button:highlight(mousePoint)
       button:mousepressed(mouseButton)
     end
+    
+    
   end
 end
 
@@ -112,10 +120,29 @@ end
 
 function home:draw()
   drawFPS(fpsCounter)
-
+  
+  love.graphics.setColor(CLR.BLACK)
+  play_mask:draw("line")
+  
   camera:draw(self.draw_scene)
   
   self:draw_UI()
+  
+end
+
+function home:draw_scene()
+  for i, pet in pairs(pets) do
+    pet:draw()
+  end
+  monster:draw()
+end
+
+function home:draw_UI()
+  love.graphics.setColor(CLR.WHITE)
+  ui_mask:draw("fill")
+  love.graphics.setColor(CLR.BLACK)
+  love.graphics.rectangle("line", 0, 0, SW, SH)
+  
   for key, button in pairs(buttons) do
     button:draw()
   end
@@ -125,18 +152,6 @@ function home:draw()
   for pos, label in pairs(labels) do
     label:draw()
   end
-end
-
-function home:draw_scene()
-  monster:draw()
-end
-
-function home:draw_UI()
-  love.graphics.setColor(CLR.WHITE)
-  love.graphics.rectangle("fill", 0, 0, SW, SH*.082)
-  love.graphics.setColor(CLR.BLACK)
-  love.graphics.rectangle("line", 0, 0, SW, SH)
-  
 end
 
 function home:initializeButtons()
@@ -168,6 +183,8 @@ end
 
 function home:handleMouse()
   mousePoint:moveTo(love.mouse.getX(), love.mouse.getY())
+  local mousex, mousey = camera:mousePosition()
+  worldMousePoint:moveTo(mousex, mousey)
   local highlightButton = false
   local highlightField = false
   
@@ -176,6 +193,7 @@ function home:handleMouse()
       highlightButton = true
     end
   end
+  
   
   for key, field in pairs(fields) do
     if field:highlight(mousePoint) then

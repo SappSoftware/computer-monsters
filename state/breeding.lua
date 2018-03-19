@@ -12,10 +12,15 @@ local activeScreen = nil
 
 local mouseLock = {}
 
+local ui_mask = {}
+local play_mask = {}
+
 function breeding:init()
   self:initializeButtons()
   self:initializeLabels()
   self:initializeFields()
+  ui_mask = HC.rectangle(0,0, SW, SH*.082)
+  play_mask = HC.rectangle(0, SH*.082, SW, SH*.918)
   --mother = Creature(desktopDimensions.x/3, desktopDimensions.y/2, 100)
   --father = Creature(desktopDimensions.x/2, desktopDimensions.y/3, 100)
   --monster = Creature(desktopDimensions.x/2, desktopDimensions.y/2, 80, father, mother)
@@ -64,6 +69,7 @@ end
 
 function breeding:mousepressed(mousex, mousey, mouseButton)
   mousePoint:moveTo(mousex, mousey)
+  worldMousePoint:moveTo(camera:mousePosition())
   mouseLock = {x = mousex, y = mousey}
   
   if mouseButton == 1 then
@@ -76,6 +82,8 @@ function breeding:mousepressed(mousex, mousey, mouseButton)
       button:highlight(mousePoint)
       button:mousepressed(mouseButton)
     end
+    
+    
   end
 end
 
@@ -101,10 +109,25 @@ end
 
 function breeding:draw()
   drawFPS(fpsCounter)
-
+  
+  love.graphics.setColor(CLR.BLACK)
+  play_mask:draw("line")
+  
   camera:draw(self.draw_scene)
   
   self:draw_UI()
+end
+
+function breeding:draw_scene()
+  --monster:draw()
+end
+
+function breeding:draw_UI()
+  love.graphics.setColor(CLR.WHITE)
+  ui_mask:draw("fill")
+  love.graphics.setColor(CLR.BLACK)
+  love.graphics.rectangle("line", 0, 0, SW, SH)
+  
   for key, button in pairs(buttons) do
     button:draw()
   end
@@ -114,17 +137,6 @@ function breeding:draw()
   for pos, label in pairs(labels) do
     label:draw()
   end
-end
-
-function breeding:draw_scene()
-  --monster:draw()
-end
-
-function breeding:draw_UI()
-  love.graphics.setColor(CLR.WHITE)
-  love.graphics.rectangle("fill", 0, 0, SW, SH*.082)
-  love.graphics.setColor(CLR.BLACK)
-  love.graphics.rectangle("line", 0, 0, SW, SH)
   
 end
 
@@ -157,6 +169,7 @@ end
 
 function breeding:handleMouse()
   mousePoint:moveTo(love.mouse.getX(), love.mouse.getY())
+  worldMousePoint:moveTo(camera:mousePosition())
   local highlightButton = false
   local highlightField = false
   
@@ -165,6 +178,8 @@ function breeding:handleMouse()
       highlightButton = true
     end
   end
+  
+  
   
   for key, field in pairs(fields) do
     if field:highlight(mousePoint) then

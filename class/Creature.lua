@@ -31,7 +31,6 @@ Creature = Class{
     self.lightness = 0
     self.color = CLR.WHITE
     self.sex = ""
-    --self.mask = HC.circle(self.pos.x,self.pos.y,self.size/2)
     self.mask = HC.polygon(self.pos.x+0.35*self.size*math.cos(0),self.pos.y+self.size/2*math.sin(0), 
                            self.pos.x+0.35*self.size*math.cos(math.pi/4),self.pos.y+self.size/2*math.sin(math.pi/4),
                            self.pos.x+0.35*self.size*math.cos(2*math.pi/4),self.pos.y+self.size/2*math.sin(2*math.pi/4),
@@ -41,6 +40,12 @@ Creature = Class{
                            self.pos.x+0.35*self.size*math.cos(6*math.pi/4),self.pos.y+self.size/2*math.sin(6*math.pi/4),
                            self.pos.x+0.35*self.size*math.cos(7*math.pi/4),self.pos.y+self.size/2*math.sin(7*math.pi/4))
     --self.cage = cage
+    
+    self.selectedCircle = HC.circle(self.pos.x, self.pos.y, self.size/2)
+    
+    self.isHighlighted = false
+    self.isSelectable = true
+    self.isSelected = false
   end;
   
   update = function(self, dt)
@@ -49,13 +54,57 @@ Creature = Class{
     --self.mask:moveTo(self.pos:unpack())
   end;
   
+  update_egg = function(self, dt)
+    
+  end;
+  
+  update_adult = function(self, dt)
+    
+  end;
+  
   draw = function(self)
-    love.graphics.setColor(self.color)
-    love.graphics.draw(self.sprite[self.state], self.pos.x, self.pos.y, self.rotation, self.scale[self.state], self.scale[self.state], self.offset[self.state].x, self.offset[self.state].y)
+    if self.state == "egg" then
+      self:draw_egg()
+    elseif self.state == "adult" then
+      self:draw_adult()
+    end
     --love.graphics.setColor(CLR.RED)
     --self.mask:draw()
     love.graphics.setColor(CLR.BLACK)
     love.graphics.print(self.sex, self.pos.x, self.pos.y)
+  end;
+  
+  draw_egg = function(self)
+    if self.isSelected then
+      love.graphics.setColor(CLR.RED)
+      self.selectedCircle:draw("line")
+    end
+    love.graphics.setColor(self.color)
+    love.graphics.draw(self.sprite["egg"], self.pos.x, self.pos.y, self.rotation, self.scale["egg"], self.scale["egg"], self.offset["egg"].x, self.offset["egg"].y)
+  end;
+  
+  draw_adult = function(self)
+    love.graphics.setColor(self.color)
+    love.graphics.draw(self.sprite["adult"], self.pos.x, self.pos.y, self.rotation, self.scale["adult"], self.scale["adult"], self.offset["adult"].x, self.offset["adult"].y)
+  end;
+  
+  highlight = function(self, mousePos)
+    if not self.isSelectable then self.isHighlighted = false return false end
+    local test = mousePos:collidesWith(self.mask)
+    if test then
+      self.isHighlighted = true
+    else 
+      self.isHighlighted = false
+    end
+    return test
+  end;
+  
+  mousepressed = function(self, mouseButton)
+    if self.isHighlighted and mouseButton == 1 then
+      self.isSelected = true
+    else
+      self.isSelected = false
+    end
   end;
   
   expressGenes = function(self)

@@ -11,7 +11,10 @@ local desktopDimensions = {}
 local screenPosition = {}
 local activeScreen = nil
 
-local test = {}
+local ui_mask = {}
+local play_mask = {}
+local adopt_mask = {}
+
 
 local mouseLock = {}
 
@@ -22,6 +25,11 @@ function adoption:init()
   
   screenPosition.x, screenPosition.y, activeScreen = love.window.getPosition()
   desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
+  
+  ui_mask = HC.rectangle(0,0, SW, SH*.082)
+  play_mask = HC.rectangle(0, SH*.082, SW, SH*.918)
+  adopt_mask = HC.rectangle(0,SH*.918, SW, SH*.082)
+  adopt_mask.
   
   camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
 end
@@ -67,6 +75,7 @@ end
 
 function adoption:mousepressed(mousex, mousey, mouseButton)
   mousePoint:moveTo(mousex, mousey)
+  worldMousePoint:moveTo(camera:mousePosition())
   mouseLock = {x = mousex, y = mousey}
   
   if mouseButton == 1 then
@@ -78,6 +87,13 @@ function adoption:mousepressed(mousex, mousey, mouseButton)
     for pos, button in pairs(buttons) do
       button:highlight(mousePoint)
       button:mousepressed(mouseButton)
+    end
+    
+    if play_mask:collidesWith(mousePoint) then
+      for key, egg in pairs(eggs) do
+        egg:highlight(worldMousePoint)
+        egg:mousepressed(mouseButton)
+      end
     end
   end
 end
@@ -105,20 +121,12 @@ end
 function adoption:draw()
   drawFPS(fpsCounter)
   
+  love.graphics.setColor(CLR.BLACK)
+  play_mask:draw("line")
   
   camera:draw(self.draw_scene)
   
   self:draw_UI()
-  
-  for key, button in pairs(buttons) do
-    button:draw()
-  end
-  for pos, field in pairs(fields) do
-    field:draw()
-  end
-  for pos, label in pairs(labels) do
-    label:draw()
-  end
 end
 
 function adoption:draw_scene()
@@ -129,9 +137,19 @@ end
 
 function adoption:draw_UI()
   love.graphics.setColor(CLR.WHITE)
-  love.graphics.rectangle("fill", 0, 0, SW, SH*.082)
+  ui_mask:draw("fill")
   love.graphics.setColor(CLR.BLACK)
   love.graphics.rectangle("line", 0, 0, SW, SH)
+  
+  for key, button in pairs(buttons) do
+    button:draw()
+  end
+  for pos, field in pairs(fields) do
+    field:draw()
+  end
+  for pos, label in pairs(labels) do
+    label:draw()
+  end
 end
 
 function adoption:initializeButtons()
@@ -163,18 +181,29 @@ end
 
 function adoption:handleMouse()
   mousePoint:moveTo(love.mouse.getX(), love.mouse.getY())
+  worldMousePoint:moveTo(camera:mousePosition())
   local highlightButton = false
   local highlightField = false
   
-  for key, button in pairs(buttons) do
-    if button:highlight(mousePoint) then
-      highlightButton = true
+  if ui_mask:collidesWith(mousePoint) then
+    for key, button in pairs(buttons) do
+      if button:highlight(mousePoint) then
+        highlightButton = true
+      end
+    end
+    
+    for key, field in pairs(fields) do
+      if field:highlight(mousePoint) then
+        highlightField = true
+      end
     end
   end
   
-  for key, field in pairs(fields) do
-    if field:highlight(mousePoint) then
-      highlightField = true
+  if play_mask:collidesWith(mousePoint) then
+    for key, egg in pairs(eggs) do
+      if egg:highlight(worldMousePoint) then
+        highlightButton = true
+      end
     end
   end
   
