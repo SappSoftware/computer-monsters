@@ -21,7 +21,7 @@ function home:init()
 end
 
 function home:enter(from)
-  love.graphics.setBackgroundColor(CLR.BLACK)
+  love.graphics.setBackgroundColor(CLR.WHITE)
   screenPosition.x, screenPosition.y, activeScreen = love.window.getPosition()
   desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
   
@@ -41,27 +41,20 @@ function home:enter(from)
 end
 
 function home:update(dt)
-  
-  TICK = TICK + dt
-  
   --monster:update(dt)
   --mother:update(dt)
   --father:update(dt)
-  if TICK >= FPS then
-    self:handleMouse()
-    if buttons.dragWindow.isSelected and love.mouse.isDown(1) then
-      local gx, gy = globalMouse:getGlobalMousePosition() -- global mouse position
-      --local lx, ly = globalMouse:toScreenPosition(gx,gy) -- local mouse position
-      if type(gx) == "number" and type(gy) == "number" then
-        local newScreenX, newScreenY = self:confineToDesktop(gx - mouseLock.x, gy - mouseLock.y)
-        camera:lookAt(newScreenX+SW/2, newScreenY+SH/2)
-        love.window.setPosition(newScreenX, newScreenY, activeScreen)
-        screenPosition.x, screenPosition.y = newScreenX, newScreenY
-        
-      end
+  self:handleMouse()
+  if buttons.dragWindow.isSelected and love.mouse.isDown(1) then
+    local gx, gy = globalMouse:getGlobalMousePosition() -- global mouse position
+    --local lx, ly = globalMouse:toScreenPosition(gx,gy) -- local mouse position
+    if type(gx) == "number" and type(gy) == "number" then
+      local newScreenX, newScreenY = self:confineToDesktop(gx - mouseLock.x, gy - mouseLock.y)
+      camera:lookAt(newScreenX+SW/2, newScreenY+SH/2)
+      love.window.setPosition(newScreenX, newScreenY, activeScreen)
+      screenPosition.x, screenPosition.y = newScreenX, newScreenY
+      
     end
-    
-    TICK = TICK - FPS
   end
 end
 

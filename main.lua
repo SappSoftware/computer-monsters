@@ -48,9 +48,6 @@ pets = {}
 
 species_list = {}
 
-TICK = 0
-FPS = 1/60
-
 function love.load(arg)
   if debug then require("mobdebug").start() end
   love.math.setRandomSeed(love.timer.getTime())
@@ -59,7 +56,7 @@ function love.load(arg)
   FNT.DEFAULT = love.graphics.newFont(math.floor(SH/32))
   mousePoint = HC.point(0,0)
   love.graphics.setFont(FNT.DEFAULT)
-  love.graphics.setBackgroundColor(CLR.BLACK)
+  love.graphics.setBackgroundColor(CLR.WHITE)
   species_list = loadSpeciesData()
   generateSpecies("Alpha")
   generateSpecies("Beta")
@@ -131,5 +128,50 @@ function generateSpecies(name)
       newSpecies.genes[gene_name] = newGene
     end
     species_list[name] = newSpecies
+  end
+end
+
+function love.run()
+ 
+	if love.math then
+		love.math.setRandomSeed(os.time())
+	end
+ 
+	if love.load then love.load(arg) end
+ 
+	-- We don't want the first frame's dt to include time taken by love.load.
+	if love.timer then love.timer.step() end
+  
+	-- Main loop time.
+  local frametime = 0
+  local accumulator = 0
+  local dt = 1/60  --specify the target update frequency here
+
+  while true do
+    love.timer.step()
+    frametime = love.timer.getDelta()
+    accumulator = accumulator + frametime
+
+    while (accumulator >= dt) do
+      if love.event then
+        love.event.pump()
+        for name, a,b,c,d,e,f in love.event.poll() do
+          if name == "quit" then
+            if not love.quit or not love.quit() then
+              return a
+            end
+          end
+          love.handlers[name](a,b,c,d,e,f)
+        end
+      end
+      -- Call update and draw
+      love.update(dt)
+      accumulator = accumulator - dt
+    end
+
+    love.graphics.clear(love.graphics.getBackgroundColor())
+    love.graphics.origin()
+    love.draw()
+    love.graphics.present()
   end
 end

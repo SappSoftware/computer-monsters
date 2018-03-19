@@ -56,6 +56,7 @@ end
 
 
 function main_menu:draw()
+  love.graphics.setBackgroundColor(CLR.WHITE)
   drawFPS(fpsCounter)
   for key, button in pairs(buttons) do
     button:draw()
