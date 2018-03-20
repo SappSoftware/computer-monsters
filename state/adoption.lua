@@ -15,7 +15,6 @@ local ui_mask = {}
 local play_mask = {}
 local adopt_mask = {}
 
-
 local mouseLock = {}
 
 function adoption:init()
@@ -27,9 +26,8 @@ function adoption:init()
   desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
   
   ui_mask = HC.rectangle(0,0, SW, SH*.082)
-  play_mask = HC.rectangle(0, SH*.082, SW, SH*.918)
+  play_mask = HC.rectangle(0, SH*.082, SW, SH*.836)
   adopt_mask = HC.rectangle(0,SH*.918, SW, SH*.082)
-  adopt_mask.
   
   camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
 end
@@ -54,6 +52,12 @@ function adoption:update(dt)
       camera:lookAt(newScreenX+SW/2, newScreenY+SH/2)
       love.window.setPosition(newScreenX, newScreenY, activeScreen)
       screenPosition.x, screenPosition.y = newScreenX, newScreenY
+    end
+  end
+  buttons.adoptEgg.isSelectable = false
+  for i, egg in pairs(eggs) do
+    if egg.isSelected then
+      buttons.adoptEgg.isSelectable = true
     end
   end
 end
@@ -138,6 +142,7 @@ end
 function adoption:draw_UI()
   love.graphics.setColor(CLR.WHITE)
   ui_mask:draw("fill")
+  adopt_mask:draw("fill")
   love.graphics.setColor(CLR.BLACK)
   love.graphics.rectangle("line", 0, 0, SW, SH)
   
@@ -158,7 +163,10 @@ function adoption:initializeButtons()
   buttons.adoption = Button(.25, .04, .1, .08, "A", CLR.BLACK)
   buttons.breeding = Button(.35, .04, .1, .08, "B", CLR.BLACK)
   
+  buttons.adoptEgg = Button(.15,.918, .2, .08, "Adopt Egg", CLR.BLACK)
+  
   buttons.adoption.isSelectable = false
+  buttons.adoptEgg.isSelectable = false
   
   buttons.home.action = function()
     love.mouse.setCursor()
@@ -168,6 +176,18 @@ function adoption:initializeButtons()
   buttons.breeding.action = function()
     love.mouse.setCursor()
     Gamestate.switch(breeding)
+  end
+  
+  buttons.adoptEgg.action = function()
+    for i, egg in pairs(eggs) do
+      if egg.isSelected then
+        egg.isSelected = false
+        buttons.adoptEgg.isSelectable = false
+        table.insert(pets, egg)
+        table.remove(eggs, i)
+        break
+      end
+    end
   end
 end
 

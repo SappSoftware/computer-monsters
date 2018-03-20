@@ -11,12 +11,12 @@ local screenPosition = {}
 local activeScreen = nil
 local monster = {}
 
-local ui_mask = {}
-local play_mask = {}
+local draw_layers = {{},{},{}}
 
 local mouseLock = {}
 
 function home:init()
+  self:initializeUISpaces()
   self:initializeButtons()
   self:initializeLabels()
   self:initializeFields()
@@ -143,15 +143,20 @@ function home:draw_UI()
   love.graphics.setColor(CLR.BLACK)
   love.graphics.rectangle("line", 0, 0, SW, SH)
   
-  for key, button in pairs(buttons) do
+  for i, button in pairs(buttons) do
     button:draw()
   end
-  for pos, field in pairs(fields) do
+  for i, field in pairs(fields) do
     field:draw()
   end
-  for pos, label in pairs(labels) do
+  for i, label in pairs(labels) do
     label:draw()
   end
+end
+
+function home:initializeUISpaces()
+  --draw_layers[1].gameArea = UISpace()
+  --draw_layers[2].toolbar = UISpace(0,0, SW, SH*.082, true)
 end
 
 function home:initializeButtons()
