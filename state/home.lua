@@ -11,6 +11,10 @@ local screenPosition = {}
 local activeScreen = nil
 local monster = {}
 
+local topbar_mask = {}
+local play_mask = {}
+local botbar_mask = {}
+
 local draw_layers = {{},{},{}}
 
 local mouseLock = {}
@@ -21,8 +25,9 @@ function home:init()
   self:initializeLabels()
   self:initializeFields()
   
-  ui_mask = HC.rectangle(0,0, SW, SH*.082)
-  play_mask = HC.rectangle(0, SH*.082, SW, SH*.918)
+  topbar_mask = HC.rectangle(0,0, SW, SH*.082)
+  play_mask = HC.rectangle(0, SH*.082, SW, SH*.836)
+  botbar_mask = HC.rectangle(0,SH*.918, SW, SH*.082)
 end
 
 function home:enter(from)
@@ -139,7 +144,8 @@ end
 
 function home:draw_UI()
   love.graphics.setColor(CLR.WHITE)
-  ui_mask:draw("fill")
+  topbar_mask:draw("fill")
+  botbar_mask:draw("fill")
   love.graphics.setColor(CLR.BLACK)
   love.graphics.rectangle("line", 0, 0, SW, SH)
   
@@ -155,7 +161,6 @@ function home:draw_UI()
 end
 
 function home:initializeUISpaces()
-  --draw_layers[1].gameArea = UISpace()
   --draw_layers[2].toolbar = UISpace(0,0, SW, SH*.082, true)
 end
 
@@ -193,16 +198,26 @@ function home:handleMouse()
   local highlightButton = false
   local highlightField = false
   
-  for key, button in pairs(buttons) do
-    if button:highlight(mousePoint) then
-      highlightButton = true
+  if topbar_mask:collidesWith(mousePoint) or botbar_mask:collidesWith(mousePoint) then
+    for key, button in pairs(buttons) do
+      if button:highlight(mousePoint) then
+        highlightButton = true
+      end
+    end
+    
+    
+    for key, field in pairs(fields) do
+      if field:highlight(mousePoint) then
+        highlightField = true
+      end
     end
   end
   
-  
-  for key, field in pairs(fields) do
-    if field:highlight(mousePoint) then
-      highlightField = true
+  if play_mask:collidesWith(mousePoint) then
+    for key, pet in pairs(pets) do
+      if pet:highlight(worldMousePoint) then
+        highlightButton = true
+      end
     end
   end
   

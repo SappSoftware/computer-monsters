@@ -11,9 +11,9 @@ local desktopDimensions = {}
 local screenPosition = {}
 local activeScreen = nil
 
-local ui_mask = {}
+local topbar_mask = {}
 local play_mask = {}
-local adopt_mask = {}
+local botbar_mask = {}
 
 local mouseLock = {}
 
@@ -25,9 +25,9 @@ function adoption:init()
   screenPosition.x, screenPosition.y, activeScreen = love.window.getPosition()
   desktopDimensions.x, desktopDimensions.y = love.window.getDesktopDimensions(activeScreen)
   
-  ui_mask = HC.rectangle(0,0, SW, SH*.082)
+  topbar_mask = HC.rectangle(0,0, SW, SH*.082)
   play_mask = HC.rectangle(0, SH*.082, SW, SH*.836)
-  adopt_mask = HC.rectangle(0,SH*.918, SW, SH*.082)
+  botbar_mask = HC.rectangle(0,SH*.918, SW, SH*.082)
   
   camera = Camera(screenPosition.x+SW/2, screenPosition.y+SH/2)
 end
@@ -141,8 +141,8 @@ end
 
 function adoption:draw_UI()
   love.graphics.setColor(CLR.WHITE)
-  ui_mask:draw("fill")
-  adopt_mask:draw("fill")
+  topbar_mask:draw("fill")
+  botbar_mask:draw("fill")
   love.graphics.setColor(CLR.BLACK)
   love.graphics.rectangle("line", 0, 0, SW, SH)
   
@@ -163,7 +163,7 @@ function adoption:initializeButtons()
   buttons.adoption = Button(.25, .04, .1, .08, "A", CLR.BLACK)
   buttons.breeding = Button(.35, .04, .1, .08, "B", CLR.BLACK)
   
-  buttons.adoptEgg = Button(.15,.918, .2, .08, "Adopt Egg", CLR.BLACK)
+  buttons.adoptEgg = Button(.15,.957, .2, .08, "Adopt Egg", CLR.BLACK)
   
   buttons.adoption.isSelectable = false
   buttons.adoptEgg.isSelectable = false
@@ -205,7 +205,7 @@ function adoption:handleMouse()
   local highlightButton = false
   local highlightField = false
   
-  if ui_mask:collidesWith(mousePoint) then
+  if topbar_mask:collidesWith(mousePoint) or botbar_mask:collidesWith(mousePoint) then
     for key, button in pairs(buttons) do
       if button:highlight(mousePoint) then
         highlightButton = true

@@ -12,15 +12,17 @@ local activeScreen = nil
 
 local mouseLock = {}
 
-local ui_mask = {}
+local topbar_mask = {}
 local play_mask = {}
+local botbar_mask = {}
 
 function breeding:init()
   self:initializeButtons()
   self:initializeLabels()
   self:initializeFields()
-  ui_mask = HC.rectangle(0,0, SW, SH*.082)
-  play_mask = HC.rectangle(0, SH*.082, SW, SH*.918)
+  topbar_mask = HC.rectangle(0,0, SW, SH*.082)
+  play_mask = HC.rectangle(0, SH*.082, SW, SH*.836)
+  botbar_mask = HC.rectangle(0,SH*.918, SW, SH*.082)
   --mother = Creature(desktopDimensions.x/3, desktopDimensions.y/2, 100)
   --father = Creature(desktopDimensions.x/2, desktopDimensions.y/3, 100)
   --monster = Creature(desktopDimensions.x/2, desktopDimensions.y/2, 80, father, mother)
@@ -124,7 +126,8 @@ end
 
 function breeding:draw_UI()
   love.graphics.setColor(CLR.WHITE)
-  ui_mask:draw("fill")
+  topbar_mask:draw("fill")
+  botbar_mask:draw("fill")
   love.graphics.setColor(CLR.BLACK)
   love.graphics.rectangle("line", 0, 0, SW, SH)
   
